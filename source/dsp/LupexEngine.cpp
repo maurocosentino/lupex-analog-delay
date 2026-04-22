@@ -16,11 +16,11 @@ namespace Lupex
     }
 
     void LupexEngine::process (float* channelL, float* channelR,
-                                int    numSamples,
-                                float  delayMs,  float feedback,
-                                float  mix,      float tone,
-                                float  drive,    bool  pingPong,
-                                bool   filterOn)
+                            int    numSamples,
+                            float  delayMs,  float feedback,
+                            float  mix,      float tone,
+                            float  drive,    bool  pingPong,
+                            bool   filterOn)
     {
         for (int i = 0; i < numSamples; ++i)
         {
@@ -29,24 +29,14 @@ namespace Lupex
             float wetL = 0.0f;
             float wetR = 0.0f;
 
-            if (pingPong)
-            {
-                // Ping-pong: los repetidos cruzan entre L y R
-                router.process (dryL, dryR,
-                                wetL, wetR,
-                                delayMs, feedback,
-                                tone, drive, filterOn);
-            }
-            else
-            {
-                // Stereo normal: cada canal se procesa independiente
-                // pero comparten el mismo router con cruce desactivado
-                router.process (dryL, dryL,
-                                wetL, wetR,
-                                delayMs, feedback,
-                                tone, drive, filterOn);
+            router.process (dryL, pingPong ? dryR : dryL,
+                            wetL, wetR,
+                            delayMs, feedback,
+                            tone, drive, filterOn);
+
+            // En mono simulado, ambos canales reciben el mismo wet
+            if (!pingPong)
                 wetR = wetL;
-            }
 
             channelL[i] = applyMix (dryL, wetL, mix);
             channelR[i] = applyMix (dryR, wetR, mix);

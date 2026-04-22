@@ -21,6 +21,8 @@ namespace Lupex
         filterR.reset();
         tapeL.reset();
         tapeR.reset();
+        lastFeedbackL = 0.0f;
+        lastFeedbackR = 0.0f;
     }
 
     void PingPongRouter::process (float  inputL,  float  inputR,
@@ -29,32 +31,42 @@ namespace Lupex
                                    float  tone,    float  drive,
                                    bool   filterOn)
     {
-        // Leer los repetidos actuales de cada canal
-        float delayedL = delayL.process (0.0f, delayMs);
-        float delayedR = delayR.process (0.0f, delayMs);
-
-        // Aplicar saturación de cinta al feedback
+        // Configurar tone y drive antes de procesar
         tapeL.setDrive (drive);
         tapeR.setDrive (drive);
-        float saturatedL = tapeL.process (delayedL * feedback);
-        float saturatedR = tapeR.process (delayedR * feedback);
 
-        // Aplicar filtro BBD si está activo
         if (filterOn)
         {
             filterL.setTone (tone);
             filterR.setTone (tone);
-            saturatedL = filterL.process (saturatedL);
-            saturatedR = filterR.process (saturatedR);
         }
 
-        // El ping-pong cruza los canales en el feedback
-        // L alimenta a R y R alimenta a L — así rebotan
-        delayL.process (inputL + saturatedR, delayMs);
-        delayR.process (inputR + saturatedL, delayMs);
+        // Leer el estado actual del feedback de cada canal
+        float feedbackL = lastFeedbackL * feedback;
+        float feedbackR = lastFeedbackR * feedback;
 
-        outputL = delayedL;
-        outputR = delayedR;
+        // Aplicar saturación de cinta al feedback
+        feedbackL = tapeL.process (feedbackL);
+        feedbackR = tapeR.process (feedbackR);
+
+        // Aplicar filtro BBD al feedback si está activo
+        if (filterOn)
+        {
+            feedbackL = filterL.process (feedbackL);
+            feedbackR = filterR.process (feedbackR);
+        }
+
+        // Ping-pong: L recibe input + feedback de R, y viceversa
+        float writeL = inputL + feedbackR;
+        float writeR = inputR + feedbackL;
+
+        // Procesar los delay lines
+        outputL = delayL.process (writeL, delayMs);
+        outputR = delayR.process (writeR, delayMs);
+
+        // Guardar el output para el próximo ciclo de feedback
+        lastFeedbackL = outputL;
+        lastFeedbackR = outputR;
     }
 
 } // namespace Lupex
