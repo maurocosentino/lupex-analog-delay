@@ -31,6 +31,7 @@ juce_add_plugin(Lupex
     EDITOR_WANTS_KEYBOARD_FOCUS FALSE
     COPY_PLUGIN_AFTER_BUILD FALSE
     VST3_CATEGORIES Fx Delay Stereo
+        VST3_AUTO_MANIFEST FALSE
 )
 
 target_sources(Lupex
@@ -73,6 +74,7 @@ target_compile_definitions(Lupex
     PUBLIC
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
+        JUCE_VST3_CAN_REPLACE_VST2=0
 )
 
 target_link_libraries(Lupex

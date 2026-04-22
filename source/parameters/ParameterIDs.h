@@ -1,14 +1,15 @@
 #pragma once
 
-namespace lupex::parameters
+namespace Lupex::ParameterIDs
 {
-struct ParameterIDs
-{
-    static constexpr const char* delayTime = "delayTime";
-    static constexpr const char* feedback = "feedback";
-    static constexpr const char* mix = "mix";
-    static constexpr const char* tone = "tone";
-    static constexpr const char* pingPong = "pingPong";
-    static constexpr const char* tapTempo = "tapTempo";
-};
+    // ── Knobs ──────────────────────────────────────────
+    constexpr const char* TIME        = "time";
+    constexpr const char* FEEDBACK    = "feedback";
+    constexpr const char* MIX         = "mix";
+    constexpr const char* TONE        = "tone";
+
+    // ── Toggles ────────────────────────────────────────
+    constexpr const char* PING_PONG   = "ping_pong";
+    constexpr const char* TEMPO_SYNC  = "tempo_sync";
+    constexpr const char* FILTER      = "filter";
 }
