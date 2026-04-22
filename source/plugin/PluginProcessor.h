@@ -2,6 +2,7 @@
 
 #include <juce_audio_processors/juce_audio_processors.h>
 #include "parameters/LupexParameters.h"
+#include "dsp/LupexEngine.h"
 
 namespace Lupex
 {
@@ -36,6 +37,8 @@ namespace Lupex
         LupexParameters parameters;
 
     private:
+        LupexEngine engine;
+
         JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (LupexProcessor)
     };
 

@@ -14,13 +14,40 @@ LupexProcessor::LupexProcessor()
 
 LupexProcessor::~LupexProcessor() {}
 
-void LupexProcessor::prepareToPlay (double, int) {}
-void LupexProcessor::releaseResources() {}
+void LupexProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+{
+    engine.prepare (sampleRate, samplesPerBlock);
+}
 
-void LupexProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer&)
+void LupexProcessor::releaseResources()
+{
+    engine.reset();
+}
+
+void LupexProcessor::processBlock (juce::AudioBuffer<float>& buffer,
+                                    juce::MidiBuffer&)
 {
     juce::ScopedNoDenormals noDenormals;
-    // DSP viene acá — por ahora pasa el audio sin tocar
+
+    // Leer parámetros actuales — thread-safe via APVTS
+    float delayMs  = parameters.getTime();
+    float feedback = parameters.getFeedback();
+    float mix      = parameters.getMix();
+    float tone     = parameters.getTone();
+    bool  pingPong = parameters.getPingPong();
+    bool  filterOn = parameters.getFilter();
+
+    // Drive lo derivamos del feedback — más feedback = más saturación
+    float drive = feedback * 0.5f;
+
+    float* channelL = buffer.getWritePointer (0);
+    float* channelR = buffer.getWritePointer (1);
+
+    engine.process (channelL, channelR,
+                    buffer.getNumSamples(),
+                    delayMs, feedback,
+                    mix, tone, drive,
+                    pingPong, filterOn);
 }
 
 juce::AudioProcessorEditor* LupexProcessor::createEditor()
@@ -55,7 +82,6 @@ void LupexProcessor::setStateInformation (const void* data, int sizeInBytes)
 
 } // namespace Lupex
 
-// ── Punto de entrada global requerido por JUCE ─────────────────────────────
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new Lupex::LupexProcessor();
