@@ -16,11 +16,10 @@ namespace Lupex
     }
 
     void LupexEngine::process (float* channelL, float* channelR,
-                            int    numSamples,
-                            float  delayMs,  float feedback,
-                            float  mix,      float tone,
-                            float  drive,    bool  pingPong,
-                            bool   filterOn)
+                                int    numSamples,
+                                float  delayMs,  float feedback,
+                                float  mix,      float tone,
+                                float  drive)
     {
         for (int i = 0; i < numSamples; ++i)
         {
@@ -29,14 +28,12 @@ namespace Lupex
             float wetL = 0.0f;
             float wetR = 0.0f;
 
-            router.process (dryL, pingPong ? dryR : dryL,
+            router.process (dryL, dryL,
                             wetL, wetR,
                             delayMs, feedback,
-                            tone, drive, filterOn);
+                            tone, drive, false);
 
-            // En mono simulado, ambos canales reciben el mismo wet
-            if (!pingPong)
-                wetR = wetL;
+            wetR = wetL;
 
             channelL[i] = applyMix (dryL, wetL, mix);
             channelR[i] = applyMix (dryR, wetR, mix);

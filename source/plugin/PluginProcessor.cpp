@@ -24,21 +24,16 @@ void LupexProcessor::releaseResources()
     engine.reset();
 }
 
-void LupexProcessor::processBlock (juce::AudioBuffer<float>& buffer,
-                                    juce::MidiBuffer&)
+    void LupexProcessor::processBlock (juce::AudioBuffer<float>& buffer,
+                                        juce::MidiBuffer&)
 {
     juce::ScopedNoDenormals noDenormals;
 
-    // Leer parámetros actuales — thread-safe via APVTS
     float delayMs  = parameters.getTime();
     float feedback = parameters.getFeedback();
     float mix      = parameters.getMix();
     float tone     = parameters.getTone();
-    bool  pingPong = parameters.getPingPong();
-    bool  filterOn = parameters.getFilter();
-
-    // Drive lo derivamos del feedback — más feedback = más saturación
-    float drive = feedback * 0.5f;
+    float drive    = feedback * 0.5f;
 
     float* channelL = buffer.getWritePointer (0);
     float* channelR = buffer.getWritePointer (1);
@@ -46,8 +41,7 @@ void LupexProcessor::processBlock (juce::AudioBuffer<float>& buffer,
     engine.process (channelL, channelR,
                     buffer.getNumSamples(),
                     delayMs, feedback,
-                    mix, tone, drive,
-                    pingPong, filterOn);
+                    mix, tone, drive);
 }
 
 juce::AudioProcessorEditor* LupexProcessor::createEditor()
