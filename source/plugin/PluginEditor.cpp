@@ -1,5 +1,5 @@
 #include "PluginEditor.h"
-
+#include <BinaryData.h>
 namespace Lupex
 {
 
@@ -7,7 +7,7 @@ LupexEditor::LupexEditor (LupexProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
     setLookAndFeel (&laf);
-    setSize (320, 420);
+    setSize (260, 420);
 
     addAndMakeVisible (knobTime);
     addAndMakeVisible (knobFeedback);
@@ -81,12 +81,14 @@ void LupexEditor::resized()
                       fsSize, fsSize);
 }
 
-void LupexEditor::drawPedalBody (juce::Graphics& g)
+    void LupexEditor::drawPedalBody (juce::Graphics& g)
 {
-    g.setColour (juce::Colour (0xfff0eeea));
-    g.fillRoundedRectangle (getLocalBounds().toFloat(), 14.0f);
-    g.setColour (juce::Colour (0xffccc8c0));
-    g.drawRoundedRectangle (getLocalBounds().toFloat().reduced (0.5f), 14.0f, 1.0f);
+    auto bg = juce::ImageCache::getFromMemory (
+        BinaryData::background_png,
+        BinaryData::background_pngSize);
+
+    g.drawImageWithin (bg, 0, 0, getWidth(), getHeight(),
+                       juce::RectanglePlacement::stretchToFit);
 }
 
 void LupexEditor::drawBypassLed (juce::Graphics& g)

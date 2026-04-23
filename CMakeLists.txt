@@ -63,6 +63,11 @@ target_sources(Lupex
         source/ui/DelayDisplay.h
 )
 
+juce_add_binary_data(LupexAssets
+        SOURCES
+        assets/images/background.png
+)
+
 target_include_directories(Lupex
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/source"
@@ -77,6 +82,7 @@ target_compile_definitions(Lupex
 
 target_link_libraries(Lupex
     PRIVATE
+        LupexAssets
         juce::juce_audio_utils
         juce::juce_dsp
     PUBLIC
