@@ -1,6 +1,8 @@
 #pragma once
 
-#include "PingPongRouter.h"
+#include "DelayLine.h"
+#include "BBDFilter.h"
+#include "TapeEmulator.h"
 
 namespace Lupex
 {
@@ -15,12 +17,23 @@ namespace Lupex
 
         void process (float* channelL, float* channelR,
                       int    numSamples,
-                      float  delayMs,  float feedback,
-                      float  mix,      float tone,
-                      float  drive);
+                      float  delayMs,
+                      float  feedback,
+                      float  mix,
+                      float  tone);
 
     private:
-        PingPongRouter router;
+        DelayLine    delayL;
+        DelayLine    delayR;
+        BBDFilter    filterL;
+        BBDFilter    filterR;
+        TapeEmulator tapeL;
+        TapeEmulator tapeR;
+
+        // Smoother para el delay time — evita glitches y crea pitch shift
+        float currentDelayMs { 300.0f };
+        float smoothingCoeff  { 0.997f };
+
         float applyMix (float dry, float wet, float mix) const;
     };
 

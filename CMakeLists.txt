@@ -39,7 +39,6 @@ target_sources(Lupex
         source/dsp/DelayLine.cpp
         source/dsp/BBDFilter.cpp
         source/dsp/TapeEmulator.cpp
-        source/dsp/PingPongRouter.cpp
         source/dsp/LupexEngine.cpp
         source/parameters/LupexParameters.cpp
         source/plugin/PluginProcessor.cpp
@@ -52,7 +51,6 @@ target_sources(Lupex
         source/dsp/DelayLine.h
         source/dsp/BBDFilter.h
         source/dsp/TapeEmulator.h
-        source/dsp/PingPongRouter.h
         source/dsp/LupexEngine.h
         source/parameters/LupexParameters.h
         source/parameters/ParameterIDs.h

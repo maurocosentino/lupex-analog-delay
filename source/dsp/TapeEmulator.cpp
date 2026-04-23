@@ -15,13 +15,13 @@ namespace Lupex
 
     float TapeEmulator::process (float input)
     {
-        float amplified = input * (1.0f + drive * 3.0f);
+        // Drive muy sutil — solo colorea, no distorsiona
+        float amplified = input * (1.0f + drive * 0.8f);
 
-        // Curva de Langevin simplificada — modela magnetización de cinta
+        // Curva de Langevin
         float saturated = amplified / (std::abs (amplified) + 1.0f);
 
-        // El 0.1f * drive agrega un toque de armónicos extra a mayor drive
-        return saturated * (1.0f + 0.1f * drive);
+        return saturated;
     }
 
 } // namespace Lupex

@@ -11,29 +11,24 @@ namespace Lupex
     public:
         DelayLine();
 
-        // Llama antes de procesar audio — reserva el buffer
         void prepare (double sampleRate, float maxDelayMs);
-
-        // Limpia el buffer — útil cuando el plugin se pausa
         void reset();
 
-        // Escribe una muestra y lee el delay en un solo paso
+        // Proceso combinado (solo lectura + avance)
         float process (float inputSample, float delayMs);
 
-        // Setea el tamaño actual del delay en muestras
-        void setDelayMs (float delayMs);
+        // Lectura y escritura separadas
+        float read  (float delayMs) const;
+        void  write (float sample);
 
     private:
-        // Convierte ms a cantidad de muestras
-        float msToSamples (float ms) const;
-
-        // Lee con interpolación lineal entre dos muestras
+        float msToSamples    (float ms) const;
         float readInterpolated (float delaySamples) const;
 
         std::vector<float> buffer;
-        int writeIndex { 0 };
+        int    writeIndex { 0 };
         double sampleRate { 44100.0 };
-        float maxDelayMs { 1200.0f };
+        float  maxDelayMs { 1200.0f };
     };
 
 } // namespace Lupex

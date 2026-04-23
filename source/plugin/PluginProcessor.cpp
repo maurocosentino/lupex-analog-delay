@@ -29,19 +29,13 @@ void LupexProcessor::releaseResources()
 {
     juce::ScopedNoDenormals noDenormals;
 
-    float delayMs  = parameters.getTime();
-    float feedback = parameters.getFeedback();
-    float mix      = parameters.getMix();
-    float tone     = parameters.getTone();
-    float drive    = feedback * 0.5f;
-
-    float* channelL = buffer.getWritePointer (0);
-    float* channelR = buffer.getWritePointer (1);
-
-    engine.process (channelL, channelR,
+    engine.process (buffer.getWritePointer (0),
+                    buffer.getWritePointer (1),
                     buffer.getNumSamples(),
-                    delayMs, feedback,
-                    mix, tone, drive);
+                    parameters.getTime(),
+                    parameters.getFeedback(),
+                    parameters.getMix(),
+                    parameters.getTone());
 }
 
 juce::AudioProcessorEditor* LupexProcessor::createEditor()
