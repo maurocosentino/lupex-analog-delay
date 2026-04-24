@@ -41,6 +41,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout LupexParameters::createLayou
         "Toggle",
         false));
 
+    params.push_back (std::make_unique<juce::AudioParameterBool> (
+    juce::ParameterID { ParameterIDs::BYPASS, 1 },
+    "Bypass",
+    false));
+
     return { params.begin(), params.end() };
 }
 
@@ -67,6 +72,10 @@ float LupexParameters::getTone() const
 bool LupexParameters::getToggle() const
 {
     return apvts.getRawParameterValue (ParameterIDs::TOGGLE)->load() > 0.5f;
+}
+    bool LupexParameters::getBypass() const
+{
+    return apvts.getRawParameterValue (ParameterIDs::BYPASS)->load() > 0.5f;
 }
 
 } // namespace Lupex

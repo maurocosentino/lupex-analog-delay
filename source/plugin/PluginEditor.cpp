@@ -3,83 +3,96 @@
 namespace Lupex
 {
 
-LupexEditor::LupexEditor (LupexProcessor& p)
-    : AudioProcessorEditor (&p), processor (p)
-{
-    setLookAndFeel (&laf);
-    setSize (260, 420);
-
-    addAndMakeVisible (knobTime);
-    addAndMakeVisible (knobFeedback);
-    addAndMakeVisible (knobTone);
-    addAndMakeVisible (knobMix);
-
-    toggle.setButtonText ("—");
-    toggle.setLookAndFeel (&laf);
-    addAndMakeVisible (toggle);
-
-    bypass.setButtonText ("BYPASS");
-    bypass.setLookAndFeel (&laf);
-    bypass.setToggleState (true, juce::dontSendNotification);
-    bypass.onClick = [this]
+    LupexEditor::LupexEditor (LupexProcessor& p)
+        : AudioProcessorEditor (&p), processor (p)
     {
-        bypassActive = !bypassActive;
-        bypass.setToggleState (bypassActive, juce::dontSendNotification);
-        repaint();
-    };
-    addAndMakeVisible (bypass);
+        setLookAndFeel (&laf);
+        setSize (260, 420);
 
-    // Attachments se crean acá — después de que los knobs existen
-    auto& apvts = processor.parameters.apvts;
-    attachTime     = std::make_unique<SliderAttachment> (apvts, "time",     knobTime);
-    attachFeedback = std::make_unique<SliderAttachment> (apvts, "feedback", knobFeedback);
-    attachTone     = std::make_unique<SliderAttachment> (apvts, "tone",     knobTone);
-    attachMix      = std::make_unique<SliderAttachment> (apvts, "mix",      knobMix);
-    attachToggle   = std::make_unique<ButtonAttachment> (apvts, "toggle",   toggle);
-}
+        addAndMakeVisible (knobTime);
+        addAndMakeVisible (knobFeedback);
+        addAndMakeVisible (knobTone);
+        addAndMakeVisible (knobMix);
+        addAndMakeVisible (toggle);
+        addAndMakeVisible (bypass);
 
-LupexEditor::~LupexEditor()
-{
-    setLookAndFeel (nullptr);
-}
+        auto& apvts = processor.parameters.apvts;
+        attachTime     = std::make_unique<SliderAttachment> (apvts, "time",     knobTime);
+        attachFeedback = std::make_unique<SliderAttachment> (apvts, "feedback", knobFeedback);
+        attachTone     = std::make_unique<SliderAttachment> (apvts, "tone",     knobTone);
+        attachMix      = std::make_unique<SliderAttachment> (apvts, "mix",      knobMix);
+        attachToggle   = std::make_unique<ButtonAttachment> (apvts, "toggle",   toggle);
+        attachBypass = std::make_unique<ButtonAttachment> (apvts, "bypass", bypass);
+        processor.parameters.apvts.addParameterListener ("bypass", this);
+    }
 
-void LupexEditor::paint (juce::Graphics& g)
-{
-    drawPedalBody  (g);
-    drawBypassLed  (g);
-    drawBrandLabel (g);
-}
+    LupexEditor::~LupexEditor()
+    {
+        processor.parameters.apvts.removeParameterListener ("bypass", this);
+        setLookAndFeel (nullptr);
+    }
 
-void LupexEditor::resized()
-{
-    auto area  = getLocalBounds().reduced (24);
-    int  knobS = 72;
+    void LupexEditor::paint (juce::Graphics& g)
+    {
+        drawPedalBody (g);
+        // drawBrandLabel (g); //Titulos
+        bool bypassed = processor.parameters.getBypass();
+        bool ledOn    = !bypassed;   // LED rojo = efecto activo (bypass OFF)
 
-    // Fila superior — TIME, FEEDBACK, TONE
-    auto topRow = area.removeFromTop (knobS + 16);
-    knobTime    .setBounds (topRow.removeFromLeft (knobS));
-    topRow.removeFromLeft (8);
-    knobFeedback.setBounds (topRow.removeFromLeft (knobS));
-    topRow.removeFromLeft (8);
-    knobTone    .setBounds (topRow.removeFromLeft (knobS));
+        // Posición — mismo centro X que el bypass, justo arriba
+        const int fsSize = 72;
+        const int fsY    = getHeight() - 30 - fsSize;
+        const int ledSize = 10;
+        const int ledX    = getWidth() / 2 - ledSize / 2;
+        const int ledY    = fsY - ledSize - 30;
 
-    area.removeFromTop (16);
+        // Glow
+        g.setColour (ledOn ? juce::Colour (0x55ff2222)
+                           : juce::Colour (0x00000000));
+        g.fillEllipse (ledX - ledSize * 0.5f, ledY - ledSize * 0.5f,
+                       ledSize * 2.0f,        ledSize * 2.0f);
 
-    // Fila media — TOGGLE · LED · MIX
-    auto midRow = area.removeFromTop (knobS);
-    toggle.setBounds (midRow.removeFromLeft (64)
-                           .withHeight (40)
-                           .withY (midRow.getY() + 16));
-    knobMix.setBounds (midRow.removeFromRight (knobS));
+        // Núcleo
+        g.setColour (ledOn ? juce::Colour (0xffcc0000)
+                           : juce::Colour (0xff1a1a1a));
+        g.fillEllipse ((float)ledX, (float)ledY,
+                       (float)ledSize, (float)ledSize);
 
-    area.removeFromTop (24);
+        // Reflejo — siempre visible
+        g.setColour (juce::Colours::white.withAlpha (ledOn ? 0.4f : 0.15f));
+        g.fillEllipse (ledX + ledSize * 0.2f, ledY + ledSize * 0.15f,
+                       ledSize * 0.35f,       ledSize * 0.25f);
+    }
 
-    // Bypass centrado abajo
-    int fsSize = 56;
-    bypass.setBounds (getWidth() / 2 - fsSize / 2,
-                      area.getY(),
-                      fsSize, fsSize);
-}
+    void LupexEditor::resized()
+    {
+        const int knobS   = 80;
+        const int padding = 10;
+        const int topY    = 30;
+
+        const int totalRow = 3 * knobS + 2 * padding;
+        const int startX   = (getWidth() - totalRow) / 2;
+
+        // ── Fila 1: TIME, FEEDBACK, TONE ──────────────────────
+        knobTime    .setBounds (startX,                     topY, knobS, knobS + 14);
+        knobFeedback.setBounds (startX + knobS + padding,   topY, knobS, knobS + 14);
+        knobTone    .setBounds (startX + 2*(knobS+padding), topY, knobS, knobS + 14);
+
+        // ── Fila 2: TOGGLE (bajo TIME) y MIX (bajo TONE) ──────
+        const int row2Y    = topY + knobS + 14 + 12;
+        const int toggleSz = 48;
+
+        toggle.setBounds (startX + 20,
+                  row2Y  + 25,
+                  toggleSz, toggleSz);
+        knobMix.setBounds (startX + 2*(knobS+padding), row2Y, knobS, knobS + 14);
+
+        // ── Bypass centrado abajo ──────────────────────────────
+        const int fsSize = 92;
+        bypass.setBounds (getWidth() / 2 - fsSize / 2 + 10,
+                          getHeight() - 30 - fsSize,
+                          fsSize, fsSize);
+    }
 
     void LupexEditor::drawPedalBody (juce::Graphics& g)
 {
@@ -89,26 +102,6 @@ void LupexEditor::resized()
 
     g.drawImageWithin (bg, 0, 0, getWidth(), getHeight(),
                        juce::RectanglePlacement::stretchToFit);
-}
-
-void LupexEditor::drawBypassLed (juce::Graphics& g)
-{
-    float ledX = getWidth()  * 0.5f;
-    float ledY = getHeight() * 0.56f;
-    float ledR = 7.0f;
-
-    g.setColour (bypassActive ? juce::Colour (0x334dff88)
-                              : juce::Colour (0x22000000));
-    g.fillEllipse (ledX - ledR * 2.0f, ledY - ledR * 2.0f,
-                   ledR * 4.0f,        ledR * 4.0f);
-
-    g.setColour (bypassActive ? juce::Colour (0xff4dff88)
-                              : juce::Colour (0xff2a2a2a));
-    g.fillEllipse (ledX - ledR, ledY - ledR, ledR * 2.0f, ledR * 2.0f);
-
-    g.setColour (juce::Colours::white.withAlpha (bypassActive ? 0.4f : 0.1f));
-    g.fillEllipse (ledX - ledR * 0.5f, ledY - ledR * 0.7f,
-                   ledR * 0.6f,        ledR * 0.5f);
 }
 
 void LupexEditor::drawBrandLabel (juce::Graphics& g)
@@ -125,5 +118,11 @@ void LupexEditor::drawBrandLabel (juce::Graphics& g)
                 getWidth() / 2 - 50, 42, 100, 14,
                 juce::Justification::centred);
 }
+
+    void LupexEditor::parameterChanged (const juce::String&, float)
+    {
+        // Este callback llega desde el audio thread → hay que redibujar en el mensaje thread
+        juce::MessageManager::callAsync ([this] { repaint(); });
+    }
 
 } // namespace Lupex

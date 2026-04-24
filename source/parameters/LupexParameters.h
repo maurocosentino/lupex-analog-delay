@@ -18,6 +18,7 @@ namespace Lupex
         float getMix()      const;
         float getTone()     const;
         bool  getToggle()   const;
+        bool getBypass() const;
 
     private:
         static juce::AudioProcessorValueTreeState::ParameterLayout createLayout();

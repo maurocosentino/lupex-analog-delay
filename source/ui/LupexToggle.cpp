@@ -1,1 +1,28 @@
-// TODO
+#include "LupexToggle.h"
+#include <BinaryData.h>
+
+namespace Lupex
+{
+
+    LupexToggle::LupexToggle()
+        : juce::Button ("toggle")
+    {
+        setClickingTogglesState (true);
+
+        toggleStrip = juce::ImageCache::getFromMemory (
+            BinaryData::switch_toggle_png,
+            BinaryData::switch_toggle_pngSize);
+    }
+
+    void LupexToggle::paintButton (juce::Graphics& g,
+                                    bool, bool)
+    {
+        // Frame 0 = down (off), Frame 1 = up (on)
+        int sourceY = getToggleState() ? frameSize : 0;
+
+        g.drawImage (toggleStrip,
+                     0, 0, getWidth(), getHeight(),
+                     0, sourceY, frameSize, frameSize);
+    }
+
+} // namespace Lupex

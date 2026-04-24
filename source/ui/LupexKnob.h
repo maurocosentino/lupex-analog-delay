@@ -1,6 +1,5 @@
 #pragma once
 
-#include <juce_audio_processors/juce_audio_processors.h>
 #include "PedalLookAndFeel.h"
 
 namespace Lupex
@@ -16,6 +15,10 @@ namespace Lupex
 
     private:
         juce::String label;
+        juce::Image  knobStrip;
+
+        static constexpr int totalFrames { 101 };
+        static constexpr int frameSize   { 128 };
     };
 
 } // namespace Lupex

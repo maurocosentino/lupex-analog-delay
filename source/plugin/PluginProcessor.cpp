@@ -29,6 +29,11 @@ void LupexProcessor::releaseResources()
 {
     juce::ScopedNoDenormals noDenormals;
 
+    if (parameters.getBypass())
+    {
+        // bypass activo - señal limpia
+        return;
+    }
     engine.process (buffer.getWritePointer (0),
                     buffer.getWritePointer (1),
                     buffer.getNumSamples(),

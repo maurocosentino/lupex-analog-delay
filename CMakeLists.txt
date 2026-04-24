@@ -66,6 +66,10 @@ target_sources(Lupex
 juce_add_binary_data(LupexAssets
         SOURCES
         assets/images/background.png
+        assets/images/knob.png
+        assets/images/switch_toggle.png
+        assets/images/footswitch_up.png
+        assets/images/footswitch_down.png
 )
 
 target_include_directories(Lupex

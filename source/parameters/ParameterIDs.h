@@ -7,6 +7,7 @@ namespace Lupex::ParameterIDs
     constexpr const char* MIX         = "mix";
     constexpr const char* TONE        = "tone";
 
-    // Toggle — función a definir al final del proyecto
+    // Toggle — función a definir
     constexpr const char* TOGGLE      = "toggle";
+    constexpr const char* BYPASS  = "bypass";
 }
