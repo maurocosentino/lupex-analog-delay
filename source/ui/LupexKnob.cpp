@@ -35,10 +35,10 @@ void LupexKnob::paint (juce::Graphics& g)
                  offsetX, 0, size, size,
                  0, sourceY, frameSize, frameSize);
 
-    g.setColour (juce::Colours::black);
-    g.setFont (juce::FontOptions ("DejaVu Sans", 9.5f, juce::Font::bold));
+    g.setColour (juce::Colours::black.withAlpha (0.8f));
+    g.setFont (juce::FontOptions ("Arial", 11.5f, juce::Font::bold));
     g.drawFittedText (label,
-                      0, getHeight() - 12,
+                      0, getHeight() - 16,
                       getWidth(), 14,
                       juce::Justification::centred, 1);
 }

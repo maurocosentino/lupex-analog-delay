@@ -7,7 +7,7 @@ namespace Lupex
         : AudioProcessorEditor (&p), processor (p)
     {
         setLookAndFeel (&laf);
-        setSize (260, 420);
+        setSize (260, 470);
 
         addAndMakeVisible (knobTime);
         addAndMakeVisible (knobFeedback);
@@ -42,57 +42,72 @@ namespace Lupex
         const int fsSize   = 92;
         const int fsOffset = 10;
         const int fsX      = getWidth() / 2 - fsSize / 2 + fsOffset;
-        const int fsY      = getHeight() - 30 - fsSize;
+        const int fsY      = getHeight() - 5 - fsSize;
 
-        const int ledSize  = 12;
-        const int ledX = fsX + fsSize + 8 - 20;
-        const int ledY = fsY + fsSize / 2 - ledSize / 2 - 8;
+        const int ledSize  = 18;
+        const int ledX = fsX + fsSize + 8 - 20 + 10;
+        const int ledY = fsY + fsSize / 2 - ledSize / 2 - 8 - 15;
 
-        // Glow
-        g.setColour (ledOn ? juce::Colour (0x55d0f4ff)
-                   : juce::Colour (0x00000000));
-        g.fillEllipse (ledX - ledSize * 0.5f, ledY - ledSize * 0.5f,
-                       ledSize * 2.0f,        ledSize * 2.0f);
+        const float lx = (float)ledX;
+        const float ly = (float)ledY;
+        const float ls = (float)ledSize;
 
-        // Núcleo
-        g.setColour (ledOn ? juce::Colour (0xffe8f8ff)
-                    : juce::Colour (0xff1a1a1a));
-        g.fillEllipse ((float)ledX, (float)ledY,
-                       (float)ledSize, (float)ledSize);
+        if (ledOn)
+        {
+            // Glow
+            g.setColour (juce::Colour (0x22dd4466));
+            g.fillEllipse (lx - ls * 0.5f, ly - ls * 0.5f, ls * 2.0f, ls * 2.0f);
+        }
 
-        // Reflejo — siempre visible
-        g.setColour (juce::Colours::white.withAlpha (ledOn ? 0.4f : 0.15f));
-        g.fillEllipse (ledX + ledSize * 0.2f, ledY + ledSize * 0.15f,
-                       ledSize * 0.35f,       ledSize * 0.25f);
+        // Housing — borde oscuro exterior
+        g.setColour (juce::Colour (0xff111111));
+        g.fillEllipse (lx - 1.0f, ly - 1.0f, ls + 2.0f, ls + 2.0f);
+
+        // Cuerpo del LED
+        g.setColour (ledOn ? juce::Colour (0xffdd4466)
+                   : juce::Colour (0xff1a2a2a));
+        g.fillEllipse (lx, ly, ls, ls);
+
+        // Capa de profundidad — mitad inferior más oscura
+        g.setColour (ledOn ? juce::Colour (0x44990022)
+                   : juce::Colour (0x66000000));
+        g.fillEllipse (lx, ly + ls * 0.4f, ls, ls * 0.6f);
+
+        // Reflejo especular principal — óvalo arriba a la izquierda
+        g.setColour (juce::Colours::white.withAlpha (ledOn ? 0.85f : 0.2f));
+        g.fillEllipse (lx + ls * 0.15f, ly + ls * 0.1f, ls * 0.4f, ls * 0.28f);
+
+        // Reflejo secundario pequeño
+        g.setColour (juce::Colours::white.withAlpha (ledOn ? 0.4f : 0.08f));
+        g.fillEllipse (lx + ls * 0.5f, ly + ls * 0.55f, ls * 0.2f, ls * 0.15f);
     }
 
     void LupexEditor::resized()
     {
-        const int knobS   = 90;
-        const int padding = 10;
-        const int topY    = 15;
+        const int knobS   = 100;
+        const int topY1 = 10;   // fila 1
+        const int topY2 = 120;  // fila 2
+        const int colLeft  = 5;
+        const int colRight = getWidth() - 5 - knobS;
 
-        const int totalRow = 3 * knobS + 2 * padding;
-        const int startX   = (getWidth() - totalRow) / 2;
+        // ── Fila 1: TIME (izq) y FEEDBACK (der) ──────────────
+        knobTime    .setBounds (colLeft,  topY1, knobS, knobS + 14);
+        knobFeedback.setBounds (colRight, topY1, knobS, knobS + 14);
 
-        // ── Fila 1: TIME, FEEDBACK, TONE ──────────────────────
-        knobTime    .setBounds (startX + 15,                    topY, knobS, knobS + 14);
-        knobFeedback.setBounds (startX + knobS + padding,       topY, knobS, knobS + 14);  // sin cambio
-        knobTone    .setBounds (startX + 2*(knobS+padding) - 12,topY, knobS, knobS + 14);
+        // ── Fila 2: TONE (izq) y MIX (der) ───────────────────
+        knobTone.setBounds (colLeft,  topY2, knobS, knobS + 14);
+        knobMix .setBounds (colRight, topY2, knobS, knobS + 14);
 
-        // ── Fila 2: TOGGLE (bajo TIME) y MIX (bajo TONE) ──────
-        const int row2Y    = topY + knobS + 14 + 12;
-        const int toggleSz = 48;
-
-        toggle.setBounds (startX + 34,
-                  row2Y  + 25,
-                  toggleSz, toggleSz);
-        knobMix.setBounds (startX + 2*(knobS+padding) - 12, row2Y, knobS, knobS + 14);
+        // ── Toggle centrado entre las 4 filas ─────────────────
+        const int toggleSz  = 52;
+        const int toggleX = getWidth() / 2 - toggleSz / 2;
+        const int toggleY = (topY1 + knobS + 14 + topY2) / 2 - toggleSz / 2;
+        toggle.setBounds (toggleX, toggleY, toggleSz, toggleSz);
 
         // ── Bypass centrado abajo ──────────────────────────────
-        const int fsSize = 92;
+        const int fsSize = 130;
         bypass.setBounds (getWidth() / 2 - fsSize / 2 + 10,
-                          getHeight() - 30 - fsSize,
+                          getHeight() - 5 - fsSize,
                           fsSize, fsSize);
     }
 
