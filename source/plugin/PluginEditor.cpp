@@ -68,9 +68,9 @@ namespace Lupex
 
     void LupexEditor::resized()
     {
-        const int knobS   = 84;
+        const int knobS   = 90;
         const int padding = 10;
-        const int topY    = 30;
+        const int topY    = 15;
 
         const int totalRow = 3 * knobS + 2 * padding;
         const int startX   = (getWidth() - totalRow) / 2;
