@@ -37,24 +37,26 @@ namespace Lupex
         drawPedalBody (g);
         // drawBrandLabel (g); //Titulos
         bool bypassed = processor.parameters.getBypass();
-        bool ledOn    = !bypassed;   // LED rojo = efecto activo (bypass OFF)
+        bool ledOn    = !bypassed;
 
-        // Posición — mismo centro X que el bypass, justo arriba
-        const int fsSize = 72;
-        const int fsY    = getHeight() - 30 - fsSize;
-        const int ledSize = 10;
-        const int ledX    = getWidth() / 2 - ledSize / 2;
-        const int ledY    = fsY - ledSize - 30;
+        const int fsSize   = 92;
+        const int fsOffset = 10;
+        const int fsX      = getWidth() / 2 - fsSize / 2 + fsOffset;
+        const int fsY      = getHeight() - 30 - fsSize;
+
+        const int ledSize  = 12;
+        const int ledX = fsX + fsSize + 8 - 20;
+        const int ledY = fsY + fsSize / 2 - ledSize / 2 - 8;
 
         // Glow
-        g.setColour (ledOn ? juce::Colour (0x55ff2222)
-                           : juce::Colour (0x00000000));
+        g.setColour (ledOn ? juce::Colour (0x55d0f4ff)
+                   : juce::Colour (0x00000000));
         g.fillEllipse (ledX - ledSize * 0.5f, ledY - ledSize * 0.5f,
                        ledSize * 2.0f,        ledSize * 2.0f);
 
         // Núcleo
-        g.setColour (ledOn ? juce::Colour (0xffcc0000)
-                           : juce::Colour (0xff1a1a1a));
+        g.setColour (ledOn ? juce::Colour (0xffe8f8ff)
+                    : juce::Colour (0xff1a1a1a));
         g.fillEllipse ((float)ledX, (float)ledY,
                        (float)ledSize, (float)ledSize);
 
@@ -66,7 +68,7 @@ namespace Lupex
 
     void LupexEditor::resized()
     {
-        const int knobS   = 80;
+        const int knobS   = 84;
         const int padding = 10;
         const int topY    = 30;
 
@@ -74,18 +76,18 @@ namespace Lupex
         const int startX   = (getWidth() - totalRow) / 2;
 
         // ── Fila 1: TIME, FEEDBACK, TONE ──────────────────────
-        knobTime    .setBounds (startX,                     topY, knobS, knobS + 14);
-        knobFeedback.setBounds (startX + knobS + padding,   topY, knobS, knobS + 14);
-        knobTone    .setBounds (startX + 2*(knobS+padding), topY, knobS, knobS + 14);
+        knobTime    .setBounds (startX + 15,                    topY, knobS, knobS + 14);
+        knobFeedback.setBounds (startX + knobS + padding,       topY, knobS, knobS + 14);  // sin cambio
+        knobTone    .setBounds (startX + 2*(knobS+padding) - 12,topY, knobS, knobS + 14);
 
         // ── Fila 2: TOGGLE (bajo TIME) y MIX (bajo TONE) ──────
         const int row2Y    = topY + knobS + 14 + 12;
         const int toggleSz = 48;
 
-        toggle.setBounds (startX + 20,
+        toggle.setBounds (startX + 34,
                   row2Y  + 25,
                   toggleSz, toggleSz);
-        knobMix.setBounds (startX + 2*(knobS+padding), row2Y, knobS, knobS + 14);
+        knobMix.setBounds (startX + 2*(knobS+padding) - 12, row2Y, knobS, knobS + 14);
 
         // ── Bypass centrado abajo ──────────────────────────────
         const int fsSize = 92;

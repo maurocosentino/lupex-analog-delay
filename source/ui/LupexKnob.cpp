@@ -35,10 +35,10 @@ void LupexKnob::paint (juce::Graphics& g)
                  offsetX, 0, size, size,
                  0, sourceY, frameSize, frameSize);
 
-    g.setColour (PedalLookAndFeel::textColour());
-    g.setFont (juce::FontOptions (9.0f));
+    g.setColour (juce::Colours::black);
+    g.setFont (juce::FontOptions ("DejaVu Sans", 9.5f, juce::Font::bold));
     g.drawFittedText (label,
-                      0, getHeight() - 14,
+                      0, getHeight() - 12,
                       getWidth(), 14,
                       juce::Justification::centred, 1);
 }
