@@ -6,7 +6,11 @@ namespace Lupex
     void WowFlutter::prepare (double sr)
     {
         sampleRate = sr;
-        reset();
+        // Fases aleatorias — L y R arrancan distintos
+        wowPhase     = static_cast<float> (std::rand()) / RAND_MAX;
+        flutterPhase = static_cast<float> (std::rand()) / RAND_MAX;
+        modPhase     = static_cast<float> (std::rand()) / RAND_MAX;
+        noiseState   = 0.0f;
     }
 
     void WowFlutter::reset()
@@ -18,14 +22,21 @@ namespace Lupex
 
     float WowFlutter::process()
     {
-        // Avanzar fases
-        wowPhase     += static_cast<float> (wowRate     / sampleRate);
-        flutterPhase += static_cast<float> (flutterRate / sampleRate);
+        // Modulador lento del wowRate
+        modPhase += static_cast<float> (modRate / sampleRate);
+        if (modPhase > 1.0f) modPhase -= 1.0f;
 
-        if (wowPhase     > 1.0f) wowPhase     -= 1.0f;
+        float currentWowRate = wowRate + std::sin (modPhase * 6.28318f) * modDepth;
+        currentWowRate = std::max (0.1f, currentWowRate);  // nunca negativo
+
+        // Wow con rate modulado
+        wowPhase += static_cast<float> (currentWowRate / sampleRate);
+        if (wowPhase > 1.0f) wowPhase -= 1.0f;
+
+        // Flutter
+        flutterPhase += static_cast<float> (flutterRate / sampleRate);
         if (flutterPhase > 1.0f) flutterPhase -= 1.0f;
 
-        // Senoidal + ruido suavizado para cada componente
         float wow     = std::sin (wowPhase     * 6.28318f) * wowDepth;
         float flutter = std::sin (flutterPhase * 6.28318f) * flutterDepth;
 

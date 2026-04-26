@@ -32,8 +32,8 @@ namespace Lupex
         feedbackFilterR.reset();
         tapeL.reset();
         tapeR.reset();
-        wowFlutterL.reset();
-        wowFlutterR.reset();
+        // wowFlutterL.reset();
+        // wowFlutterR.reset();
     }
 
     void LupexEngine::process (float* channelL, float* channelR,
