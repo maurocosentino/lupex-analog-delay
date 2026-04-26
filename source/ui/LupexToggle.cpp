@@ -18,7 +18,7 @@ namespace Lupex
                                     bool, bool)
     {
         // Frame 0 = down (off), Frame 1 = up (on)
-        int sourceY = getToggleState() ? frameSize : 0;
+        int sourceY = getToggleState() ? 0 : frameSize;
 
         g.drawImage (toggleStrip,
                      0, 0, getWidth(), getHeight(),
