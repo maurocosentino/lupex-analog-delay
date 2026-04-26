@@ -39,15 +39,21 @@ namespace Lupex
         for (int i = 0; i < numSamples; ++i)
         {
             // Suavizar el delay time sample a sample
-            // smoothingCoeff cercano a 1.0 = movimiento más lento = pitch más suave
-            currentDelayMs = currentDelayMs * smoothingCoeff
-                           + delayMs * (1.0f - smoothingCoeff);
+            targetDelayMs = delayMs;
+            float delta = targetDelayMs - currentDelayMs;
+            float maxStep = maxStepMs;
+            if      (delta >  maxStep) currentDelayMs += maxStep;
+            else if (delta < -maxStep) currentDelayMs -= maxStep;
+            else                       currentDelayMs  = targetDelayMs;
 
             float dryL = channelL[i];
             float dryR = channelR[i];
 
-            float wetL = delayL.read (currentDelayMs);
-            float wetR = delayR.read (currentDelayMs);
+            float delayL_ms = currentDelayMs * (1.0f + stereoSpread);
+            float delayR_ms = currentDelayMs * (1.0f - stereoSpread);
+
+            float wetL = delayL.read (delayL_ms);
+            float wetR = delayR.read (delayR_ms);
 
             float fbL = juce::jlimit (-0.95f, 0.95f, wetL * feedback);
             float fbR = juce::jlimit (-0.95f, 0.95f, wetR * feedback);

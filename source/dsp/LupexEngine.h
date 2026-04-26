@@ -32,7 +32,9 @@ namespace Lupex
 
         // Smoother para el delay time — evita glitches y crea pitch shift
         float currentDelayMs { 300.0f };
-        float smoothingCoeff  { 0.997f };
+        float targetDelayMs  { 300.0f };
+        static constexpr float maxStepMs { 0.5f };
+        static constexpr float stereoSpread { 0.01f };
 
         float applyMix (float dry, float wet, float mix) const;
     };
