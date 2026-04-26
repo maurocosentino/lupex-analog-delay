@@ -38,7 +38,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout LupexParameters::createLayou
 
     params.push_back (std::make_unique<juce::AudioParameterBool> (
         juce::ParameterID { ParameterIDs::TOGGLE, 1 },
-        "Toggle",
+        "Ping-Pong",
         false));
 
     params.push_back (std::make_unique<juce::AudioParameterBool> (

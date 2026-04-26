@@ -38,13 +38,11 @@ namespace Lupex
 
         for (int i = 0; i < numSamples; ++i)
         {
-            // Suavizar el delay time sample a sample
-            targetDelayMs = delayMs;
-            float delta = targetDelayMs - currentDelayMs;
-            float maxStep = maxStepMs;
-            if      (delta >  maxStep) currentDelayMs += maxStep;
-            else if (delta < -maxStep) currentDelayMs -= maxStep;
-            else                       currentDelayMs  = targetDelayMs;
+            // Smoother
+            float delta = delayMs - currentDelayMs;
+            if      (delta >  maxStepMs) currentDelayMs += maxStepMs;
+            else if (delta < -maxStepMs) currentDelayMs -= maxStepMs;
+            else                          currentDelayMs  = delayMs;
 
             float dryL = channelL[i];
             float dryR = channelR[i];
@@ -55,25 +53,54 @@ namespace Lupex
             float wetL = delayL.read (delayL_ms);
             float wetR = delayR.read (delayR_ms);
 
-            float fbL = juce::jlimit (-0.95f, 0.95f, wetL * feedback);
-            float fbR = juce::jlimit (-0.95f, 0.95f, wetR * feedback);
+            float fbL, fbR;
+
+            if (pingPong)
+            {
+                // Feedback cruzado: wetR alimenta L, wetL alimenta R
+                fbL = juce::jlimit (-0.95f, 0.95f, wetR * feedback);
+                fbR = juce::jlimit (-0.95f, 0.95f, wetL * feedback);
+            }
+            else
+            {
+                fbL = juce::jlimit (-0.95f, 0.95f, wetL * feedback);
+                fbR = juce::jlimit (-0.95f, 0.95f, wetR * feedback);
+            }
 
             fbL = filterL.process (fbL);
             fbR = filterR.process (fbR);
             fbL = tapeL.process (fbL);
             fbR = tapeR.process (fbR);
 
-            delayL.write (dryL + fbL);
-            delayR.write (dryR + fbR);
+            if (pingPong)
+            {
+                // L recibe dry + feedback, R solo feedback (primer rebote sale por R)
+                delayL.write (dryL + fbL);
+                delayR.write (fbR);
 
-            channelL[i] = applyMix (dryL, wetL, mix);
-            channelR[i] = applyMix (dryR, wetR, mix);
+                // Output: dry centrado, wet L y R alternados
+                channelL[i] = dryL * (1.0f - mix) + wetL * mix;
+                channelR[i] = dryR * (1.0f - mix) + wetR * mix;
+            }
+            else
+            {
+                delayL.write (dryL + fbL);
+                delayR.write (dryR + fbR);
+
+                channelL[i] = applyMix (dryL, wetL, mix);
+                channelR[i] = applyMix (dryR, wetR, mix);
+            }
         }
     }
 
     float LupexEngine::applyMix (float dry, float wet, float mix) const
     {
         return dry * (1.0f - mix) + wet * mix;
+    }
+
+    void LupexEngine::setPingPong (bool enabled)
+    {
+        pingPong = enabled;
     }
 
 } // namespace Lupex

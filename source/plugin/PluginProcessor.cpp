@@ -34,6 +34,7 @@ void LupexProcessor::releaseResources()
         // bypass activo - señal limpia
         return;
     }
+    engine.setPingPong (parameters.getToggle());
     engine.process (buffer.getWritePointer (0),
                     buffer.getWritePointer (1),
                     buffer.getNumSamples(),

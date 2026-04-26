@@ -13,6 +13,7 @@ namespace Lupex
         LupexEngine();
 
         void prepare (double sampleRate, int samplesPerBlock);
+        void setPingPong (bool enabled);
         void reset();
 
         void process (float* channelL, float* channelR,
@@ -35,6 +36,7 @@ namespace Lupex
         float targetDelayMs  { 300.0f };
         static constexpr float maxStepMs { 0.5f };
         static constexpr float stereoSpread { 0.01f };
+        bool pingPong { false };
 
         float applyMix (float dry, float wet, float mix) const;
     };
