@@ -14,6 +14,12 @@ namespace Lupex
         filterR.prepare (sampleRate);
         feedbackFilterL.prepare (sampleRate);
         feedbackFilterR.prepare (sampleRate);
+        wowFlutterL.prepare (sampleRate);
+        wowFlutterR.prepare (sampleRate);
+        wowFlutterL.setWowDepth     (0.3f);
+        wowFlutterL.setFlutterDepth (0.08f);
+        wowFlutterR.setWowDepth     (0.3f);
+        wowFlutterR.setFlutterDepth (0.08f);
     }
 
     void LupexEngine::reset()
@@ -22,8 +28,12 @@ namespace Lupex
         delayR.reset();
         filterL.reset();
         filterR.reset();
+        feedbackFilterL.reset();
+        feedbackFilterR.reset();
         tapeL.reset();
         tapeR.reset();
+        wowFlutterL.reset();
+        wowFlutterR.reset();
     }
 
     void LupexEngine::process (float* channelL, float* channelR,
@@ -50,8 +60,11 @@ namespace Lupex
             float dryL = channelL[i];
             float dryR = channelR[i];
 
-            float delayL_ms = smoothedDelayMs * (1.0f + stereoSpread);
-            float delayR_ms = smoothedDelayMs * (1.0f - stereoSpread);
+            float wowL = wowFlutterL.process();
+            float wowR = wowFlutterR.process();
+
+            float delayL_ms = smoothedDelayMs * (1.0f + stereoSpread) + wowL;
+            float delayR_ms = smoothedDelayMs * (1.0f - stereoSpread) + wowR;
 
             float wetL = delayL.read (delayL_ms);
             float wetR = delayR.read (delayR_ms);

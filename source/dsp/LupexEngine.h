@@ -3,6 +3,7 @@
 #include "DelayLine.h"
 #include "BBDFilter.h"
 #include "TapeEmulator.h"
+#include "WowFlutter.h"
 
 namespace Lupex
 {
@@ -32,6 +33,8 @@ namespace Lupex
         BBDFilter feedbackFilterR;
         TapeEmulator tapeL;
         TapeEmulator tapeR;
+        WowFlutter wowFlutterL;
+        WowFlutter wowFlutterR;
 
         float smoothedDelayMs { 300.0f };
         // float smoothingCoeff  { 0.9995f };

@@ -40,6 +40,8 @@ target_sources(Lupex
         source/dsp/BBDFilter.cpp
         source/dsp/TapeEmulator.cpp
         source/dsp/LupexEngine.cpp
+        source/dsp/WowFlutter.cpp
+        source/dsp/WowFlutter.h
         source/parameters/LupexParameters.cpp
         source/plugin/PluginProcessor.cpp
         source/plugin/PluginEditor.cpp
