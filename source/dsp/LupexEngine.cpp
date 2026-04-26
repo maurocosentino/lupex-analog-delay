@@ -53,43 +53,33 @@ namespace Lupex
             float wetL = delayL.read (delayL_ms);
             float wetR = delayR.read (delayR_ms);
 
-            float fbL, fbR;
+            // Transición suave entre modos
+            float targetPPMix = pingPong ? 1.0f : 0.0f;
+            pingPongMix += (targetPPMix - pingPongMix) * pingPongSlew;
 
-            if (pingPong)
-            {
-                // Feedback cruzado: wetR alimenta L, wetL alimenta R
-                fbL = juce::jlimit (-0.95f, 0.95f, wetR * feedback);
-                fbR = juce::jlimit (-0.95f, 0.95f, wetL * feedback);
-            }
-            else
-            {
-                fbL = juce::jlimit (-0.95f, 0.95f, wetL * feedback);
-                fbR = juce::jlimit (-0.95f, 0.95f, wetR * feedback);
-            }
+            float fbL_normal = wetL * feedback;
+            float fbR_normal = wetR * feedback;
+            float fbL_cross  = wetR * feedback;
+            float fbR_cross  = wetL * feedback;
+
+            float fbL = juce::jlimit (-0.95f, 0.95f,
+                fbL_normal * (1.0f - pingPongMix) + fbL_cross * pingPongMix);
+            float fbR = juce::jlimit (-0.95f, 0.95f,
+                fbR_normal * (1.0f - pingPongMix) + fbR_cross * pingPongMix);
 
             fbL = filterL.process (fbL);
             fbR = filterR.process (fbR);
             fbL = tapeL.process (fbL);
             fbR = tapeR.process (fbR);
 
-            if (pingPong)
-            {
-                // L recibe dry + feedback, R solo feedback (primer rebote sale por R)
-                delayL.write (dryL + fbL);
-                delayR.write (fbR);
+            delayL.write (dryL + fbL);
+            delayR.write (
+                (dryR + fbR) * (1.0f - pingPongMix) +   // normal
+                fbR           *  pingPongMix              // ping-pong
+            );
 
-                // Output: dry centrado, wet L y R alternados
-                channelL[i] = dryL * (1.0f - mix) + wetL * mix;
-                channelR[i] = dryR * (1.0f - mix) + wetR * mix;
-            }
-            else
-            {
-                delayL.write (dryL + fbL);
-                delayR.write (dryR + fbR);
-
-                channelL[i] = applyMix (dryL, wetL, mix);
-                channelR[i] = applyMix (dryR, wetR, mix);
-            }
+            channelL[i] = applyMix (dryL, wetL, mix);
+            channelR[i] = applyMix (dryR, wetR, mix);
         }
     }
 

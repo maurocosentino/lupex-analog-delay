@@ -39,6 +39,8 @@ namespace Lupex
         bool pingPong { false };
 
         float applyMix (float dry, float wet, float mix) const;
+        float pingPongMix { 0.0f };        // 0.0 = normal, 1.0 = ping-pong
+        static constexpr float pingPongSlew { 0.005f };  // antes: 0.001f
     };
 
 } // namespace Lupex
