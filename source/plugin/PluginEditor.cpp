@@ -21,7 +21,7 @@ namespace Lupex
         attachFeedback = std::make_unique<SliderAttachment> (apvts, "feedback", knobFeedback);
         attachTone     = std::make_unique<SliderAttachment> (apvts, "tone",     knobTone);
         attachMix      = std::make_unique<SliderAttachment> (apvts, "mix",      knobMix);
-        attachToggle   = std::make_unique<ButtonAttachment> (apvts, "toggle",   toggle);
+        attachToggle = std::make_unique<ButtonAttachment> (apvts, "pingpong", toggle);
         attachBypass = std::make_unique<ButtonAttachment> (apvts, "bypass", bypass);
         processor.parameters.apvts.addParameterListener ("bypass", this);
     }

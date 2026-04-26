@@ -33,8 +33,7 @@ namespace Lupex
     {
         // Mapeamos tone (0.0–1.0) a frecuencia de corte (800Hz–8000Hz)
         // A menor tone → menor frecuencia → más oscuro
-        float cutoffHz = 200.0f + tone * 7800.0f;
-
+        float cutoffHz = 1200.0f + tone * 7200.0f;
         // Fórmula estándar para coeficiente de filtro RC digital
         float rc = 1.0f / (2.0f * 3.14159265f * cutoffHz);
         float dt = 1.0f / static_cast<float> (sampleRate);

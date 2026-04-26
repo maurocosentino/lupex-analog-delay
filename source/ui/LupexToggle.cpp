@@ -5,7 +5,7 @@ namespace Lupex
 {
 
     LupexToggle::LupexToggle()
-        : juce::Button ("toggle")
+        : juce::Button ("pingpong")
     {
         setClickingTogglesState (true);
 
