@@ -31,15 +31,13 @@ namespace Lupex
         TapeEmulator tapeL;
         TapeEmulator tapeR;
 
-        // Smoother para el delay time — evita glitches y crea pitch shift
-        float currentDelayMs { 300.0f };
-        float targetDelayMs  { 300.0f };
-        static constexpr float maxStepMs { 0.5f };
+        float smoothedDelayMs { 300.0f };
+        // float smoothingCoeff  { 0.9995f };
         static constexpr float stereoSpread { 0.01f };
         bool pingPong { false };
 
         float applyMix (float dry, float wet, float mix) const;
-        float pingPongMix { 0.0f };        // 0.0 = normal, 1.0 = ping-pong
+        float pingPongMix { 0.0f };
         static constexpr float pingPongSlew { 0.005f };  // antes: 0.001f
     };
 

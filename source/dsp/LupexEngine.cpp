@@ -39,16 +39,15 @@ namespace Lupex
         for (int i = 0; i < numSamples; ++i)
         {
             // Smoother
-            float delta = delayMs - currentDelayMs;
-            if      (delta >  maxStepMs) currentDelayMs += maxStepMs;
-            else if (delta < -maxStepMs) currentDelayMs -= maxStepMs;
-            else                          currentDelayMs  = delayMs;
+            float diff = std::abs (delayMs - smoothedDelayMs);
+            float adaptiveCoeff = 0.9995f + (1.0f - 0.9995f) * juce::jlimit (0.0f, 1.0f, 1.0f - diff / 500.0f);
+            smoothedDelayMs = smoothedDelayMs * adaptiveCoeff + delayMs * (1.0f - adaptiveCoeff);
 
             float dryL = channelL[i];
             float dryR = channelR[i];
 
-            float delayL_ms = currentDelayMs * (1.0f + stereoSpread);
-            float delayR_ms = currentDelayMs * (1.0f - stereoSpread);
+            float delayL_ms = smoothedDelayMs * (1.0f + stereoSpread);
+            float delayR_ms = smoothedDelayMs * (1.0f - stereoSpread);
 
             float wetL = delayL.read (delayL_ms);
             float wetR = delayR.read (delayR_ms);
