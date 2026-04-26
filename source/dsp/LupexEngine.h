@@ -28,6 +28,8 @@ namespace Lupex
         DelayLine    delayR;
         BBDFilter    filterL;
         BBDFilter    filterR;
+        BBDFilter feedbackFilterL;  // filtro dedicado al feedback loop
+        BBDFilter feedbackFilterR;
         TapeEmulator tapeL;
         TapeEmulator tapeR;
 

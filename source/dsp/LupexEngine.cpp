@@ -12,6 +12,8 @@ namespace Lupex
         delayR.prepare (sampleRate, 1200.0f);
         filterL.prepare (sampleRate);
         filterR.prepare (sampleRate);
+        feedbackFilterL.prepare (sampleRate);
+        feedbackFilterR.prepare (sampleRate);
     }
 
     void LupexEngine::reset()
@@ -33,6 +35,8 @@ namespace Lupex
     {
         filterL.setTone (tone);
         filterR.setTone (tone);
+        feedbackFilterL.setTone (tone * 0.6f);  // feedback más oscuro que el wet
+        feedbackFilterR.setTone (tone * 0.6f);
         tapeL.setDrive (0.15f);
         tapeR.setDrive (0.15f);
 
@@ -69,6 +73,8 @@ namespace Lupex
 
             wetL = filterL.process (wetL);
             wetR = filterR.process (wetR);
+            fbL = feedbackFilterL.process (fbL);  // feedback se oscurece acumulativamente
+            fbR = feedbackFilterR.process (fbR);
             fbL = tapeL.process (fbL);
             fbR = tapeR.process (fbR);
 
