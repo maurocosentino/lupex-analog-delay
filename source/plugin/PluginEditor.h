@@ -4,7 +4,7 @@
 #include "../ui/PedalLookAndFeel.h"
 #include "../ui/LupexKnob.h"
 #include "../ui/LupexToggle.h"
-#include "../ui/TapTempoButton.h"
+#include "../ui/BypassButton.h"
 #include "PluginProcessor.h"
 
 namespace Lupex

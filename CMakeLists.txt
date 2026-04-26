@@ -48,7 +48,7 @@ target_sources(Lupex
         source/ui/LupexKnob.cpp
         source/ui/LupexToggle.cpp
         source/ui/PedalLookAndFeel.cpp
-        source/ui/TapTempoButton.cpp
+        source/ui/BypassButton.cpp
         source/ui/DelayDisplay.cpp
         source/dsp/DelayLine.h
         source/dsp/BBDFilter.h
@@ -61,7 +61,7 @@ target_sources(Lupex
         source/ui/LupexKnob.h
         source/ui/LupexToggle.h
         source/ui/PedalLookAndFeel.h
-        source/ui/TapTempoButton.h
+        source/ui/BypassButton.h
         source/ui/DelayDisplay.h
 )
 

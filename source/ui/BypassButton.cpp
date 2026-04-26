@@ -1,4 +1,4 @@
-#include "TapTempoButton.h"
+#include "BypassButton.h"
 #include <BinaryData.h>
 
 namespace Lupex
