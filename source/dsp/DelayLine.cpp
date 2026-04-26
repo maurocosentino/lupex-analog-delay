@@ -1,5 +1,6 @@
 #include "DelayLine.h"
 #include <cmath>
+#include <juce_core/juce_core.h>
 
 namespace Lupex
 {
@@ -36,7 +37,6 @@ namespace Lupex
 
         float targetDelaySamples = msToSamples(delayMs);
         float targetReadPos = (float)writeIndex - targetDelaySamples;
-
         // wrap target
         while (targetReadPos < 0.0f)
             targetReadPos += (float)bufferSize;
@@ -44,13 +44,20 @@ namespace Lupex
         // 🔥 smoothing del read pointer (clave para analog feel)
         float diff = targetReadPos - readPos;
 
-        // wrap diff 
+        // wrap diff
         if (diff >  bufferSize * 0.5f) diff -= bufferSize;
         if (diff < -bufferSize * 0.5f) diff += bufferSize;
 
-        // velocidad de adaptación (ajustable)
-        float smoothing = 0.0015f; // ← probá entre 0.001 y 0.01
-        readPos += diff * smoothing;
+        // velocidad de adaptación
+        float smoothing = 0.001f;
+        float maxSpeed  = 2.5f;
+
+        float step = diff * smoothing;
+
+        // soft limiter
+        step = maxSpeed * std::tanh(step / maxSpeed);
+
+        readPos += step;
 
         // wrap readPos
         if (readPos < 0.0f) readPos += bufferSize;
