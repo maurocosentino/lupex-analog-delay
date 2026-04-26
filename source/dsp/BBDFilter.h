@@ -22,6 +22,7 @@ namespace Lupex
         double sampleRate { 44100.0 };
         float  coefficient { 0.8f };
         float  lastOutput  { 0.0f };  // estado interno del filtro
+        float lastOutput2 { 0.0f };
     };
 
 } // namespace Lupex

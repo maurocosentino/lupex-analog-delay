@@ -66,8 +66,9 @@ namespace Lupex
             float fbR = juce::jlimit (-0.95f, 0.95f,
                 fbR_normal * (1.0f - pingPongMix) + fbR_cross * pingPongMix);
 
-            fbL = filterL.process (fbL);
-            fbR = filterR.process (fbR);
+
+            wetL = filterL.process (wetL);
+            wetR = filterR.process (wetR);
             fbL = tapeL.process (fbL);
             fbR = tapeR.process (fbR);
 
