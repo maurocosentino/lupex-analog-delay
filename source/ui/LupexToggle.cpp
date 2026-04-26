@@ -23,6 +23,12 @@ namespace Lupex
         g.drawImage (toggleStrip,
                      0, 0, getWidth(), getHeight(),
                      0, sourceY, frameSize, frameSize);
+        g.setColour (juce::Colours::black.withAlpha (0.8f));
+        g.setFont (juce::FontOptions ("Arial", 8.0f, juce::Font::bold));
+        g.drawFittedText (label,
+                  0, -2,
+                  getWidth(), 14,
+                  juce::Justification::centred, 1);
     }
 
 } // namespace Lupex

@@ -99,7 +99,7 @@ namespace Lupex
         knobMix .setBounds (colRight, topY2, knobS, knobS + 14);
 
         // ── Toggle centrado entre las 4 filas ─────────────────
-        const int toggleSz  = 52;
+        const int toggleSz = 52 + 14;  // +14 para el label
         const int toggleX = getWidth() / 2 - toggleSz / 2;
         const int toggleY = (topY1 + knobS + 14 + topY2) / 2 - toggleSz / 2;
         toggle.setBounds (toggleX, toggleY, toggleSz, toggleSz);

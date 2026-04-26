@@ -15,8 +15,8 @@ namespace Lupex
                           bool shouldDrawButtonAsDown) override;
 
     private:
+        juce::String label { "PING PONG" };
         juce::Image toggleStrip;
-
         static constexpr int frameSize { 128 };
     };
 
