@@ -1,4 +1,6 @@
 #include "WowFlutter.h"
+#include <cmath>
+#include <algorithm>
 #include <cstdlib>
 
 namespace Lupex
