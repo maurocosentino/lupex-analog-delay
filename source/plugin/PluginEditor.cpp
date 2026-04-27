@@ -36,6 +36,11 @@ namespace Lupex
     {
         drawPedalBody (g);
         // drawBrandLabel (g); //Titulos
+        g.setColour (juce::Colour (0x99000000));
+        g.setFont (juce::FontOptions (11.0f).withStyle ("Bold"));
+        g.drawText ("FAUZ AUDIO",
+                0, getHeight() - 24, getWidth(), 12,
+                juce::Justification::centred);
         bool bypassed = processor.parameters.getBypass();
         bool ledOn    = !bypassed;
 
