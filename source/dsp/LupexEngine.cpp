@@ -16,9 +16,9 @@ namespace Lupex
         feedbackFilterR.prepare (sampleRate);
         wowFlutterL.prepare (sampleRate);
         wowFlutterR.prepare (sampleRate);
-        wowFlutterL.setWowDepth     (0.3f);
+        wowFlutterL.setWowDepth     (0.8f);
         wowFlutterL.setFlutterDepth (0.08f);
-        wowFlutterR.setWowDepth     (0.3f);
+        wowFlutterR.setWowDepth     (0.8f);
         wowFlutterR.setFlutterDepth (0.08f);
     }
 
@@ -78,10 +78,15 @@ namespace Lupex
             float fbL_cross  = wetR * feedback;
             float fbR_cross  = wetL * feedback;
 
-            float fbL = juce::jlimit (-0.95f, 0.95f,
-                fbL_normal * (1.0f - pingPongMix) + fbL_cross * pingPongMix);
-            float fbR = juce::jlimit (-0.95f, 0.95f,
-                fbR_normal * (1.0f - pingPongMix) + fbR_cross * pingPongMix);
+            float fbL = fbL_normal * (1.0f - pingPongMix) + fbL_cross * pingPongMix;
+            float fbR = fbR_normal * (1.0f - pingPongMix) + fbR_cross * pingPongMix;
+
+            // Solo limitá si no esta en self-oscillation
+            if (feedback < 0.95f)
+            {
+                fbL = juce::jlimit (-0.98f, 0.98f, fbL);
+                fbR = juce::jlimit (-0.98f, 0.98f, fbR);
+            }
 
 
             wetL = filterL.process (wetL);

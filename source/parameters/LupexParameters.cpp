@@ -21,7 +21,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout LupexParameters::createLayou
     params.push_back (std::make_unique<juce::AudioParameterFloat> (
         juce::ParameterID { ParameterIDs::FEEDBACK, 1 },
         "Feedback",
-        juce::NormalisableRange<float> (0.0f, 95.0f, 0.1f),
+        juce::NormalisableRange<float> (0.0f, 100.0f, 0.1f),
         40.0f));
 
     params.push_back (std::make_unique<juce::AudioParameterFloat> (
@@ -53,10 +53,11 @@ float LupexParameters::getTime() const
 {
     return apvts.getRawParameterValue (ParameterIDs::TIME)->load();
 }
-
-float LupexParameters::getFeedback() const
+    
+    float LupexParameters::getFeedback() const
 {
-    return apvts.getRawParameterValue (ParameterIDs::FEEDBACK)->load() / 100.0f;
+    float raw = apvts.getRawParameterValue (ParameterIDs::FEEDBACK)->load();
+    return raw / 100.0f;  // 0.0 a 1.0
 }
 
 float LupexParameters::getMix() const
