@@ -27,7 +27,7 @@ namespace Lupex
         if (modPhase > 1.0f) modPhase -= 1.0f;
 
         float currentWowRate = wowRate + std::sin (modPhase * 6.28318f) * modDepth;
-        currentWowRate = std::max (0.1f, currentWowRate);  // nunca negativo
+        currentWowRate = std::max (0.1f, currentWowRate);
 
         // Wow con rate modulado
         wowPhase += static_cast<float> (currentWowRate / sampleRate);
