@@ -23,7 +23,7 @@ juce_add_plugin(Lupex
     PLUGIN_MANUFACTURER_CODE Faud
     PLUGIN_CODE Lupx
     FORMATS VST3
-    PRODUCT_NAME "Lupex"
+    PRODUCT_NAME "Lupex Delay"
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE
     NEEDS_MIDI_OUTPUT FALSE
@@ -98,24 +98,46 @@ target_link_libraries(Lupex
         juce::juce_recommended_warning_flags
 )
 
+include(FetchContent)
+FetchContent_Declare(
+        Catch2
+        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
+        GIT_TAG        v3.5.2
+)
+FetchContent_MakeAvailable(Catch2)
+
 if(LUPEX_ENABLE_TESTS)
     enable_testing()
 
     add_executable(LupexTests
-        tests/DelayLineTest.cpp
-        tests/BBDFilterTest.cpp
-        tests/ParametersTest.cpp
+            tests/DelayLineTest.cpp
+            tests/BBDFilterTest.cpp
+            tests/ParametersTest.cpp
+            source/dsp/DelayLine.cpp
+            source/dsp/BBDFilter.cpp
+            source/dsp/TapeEmulator.cpp
+            source/dsp/WowFlutter.cpp
+            source/dsp/LupexEngine.cpp
     )
 
     target_include_directories(LupexTests
-        PRIVATE
+            PRIVATE
             "${CMAKE_CURRENT_SOURCE_DIR}/source"
     )
 
+    target_compile_definitions(LupexTests
+            PRIVATE
+            JUCE_WEB_BROWSER=0
+            JUCE_USE_CURL=0
+    )
+
     target_link_libraries(LupexTests
-        PRIVATE
+            PRIVATE
+            Catch2::Catch2WithMain
             juce::juce_core
     )
 
-    add_test(NAME LupexTests COMMAND LupexTests)
+    include(CTest)
+    include(Catch)
+    catch_discover_tests(LupexTests)
 endif()

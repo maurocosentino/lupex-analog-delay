@@ -32,6 +32,8 @@ namespace Lupex
         feedbackFilterR.reset();
         tapeL.reset();
         tapeR.reset();
+        dcBlockX_L = dcBlockY_L = 0.0f;
+        dcBlockX_R = dcBlockY_R = 0.0f;
         // wowFlutterL.reset();
         // wowFlutterR.reset();
     }
@@ -41,7 +43,8 @@ namespace Lupex
                             float  delayMs,
                             float  feedback,
                             float  mix,
-                            float  tone)
+                            float  tone,
+                            bool   bypassed)
     {
         filterL.setTone (tone);
         filterR.setTone (tone);
@@ -102,8 +105,19 @@ namespace Lupex
                 fbR           *  pingPongMix              // ping-pong
             );
 
-            channelL[i] = applyMix (dryL, wetL, mix);
-            channelR[i] = applyMix (dryR, wetR, mix);
+            // DC blocking sobre el wet
+            float newDcL = wetL - dcBlockX_L + dcBlockR * dcBlockY_L;
+            dcBlockX_L = wetL; dcBlockY_L = newDcL; wetL = newDcL;
+
+            float newDcR = wetR - dcBlockX_R + dcBlockR * dcBlockY_R;
+            dcBlockX_R = wetR; dcBlockY_R = newDcR; wetR = newDcR;
+
+            // Bypass smooth
+            float targetGain = bypassed ? 0.0f : 1.0f;
+            bypassGain += (targetGain - bypassGain) * bypassSmoothing;
+
+            channelL[i] = applyMix (dryL, wetL * bypassGain, mix);
+            channelR[i] = applyMix (dryR, wetR * bypassGain, mix);
         }
     }
 

@@ -15,6 +15,7 @@ namespace Lupex
     void BBDFilter::reset()
     {
         lastOutput = 0.0f;
+        lastOutput2 = 0.0f;
     }
 
     void BBDFilter::setTone (float tone)
