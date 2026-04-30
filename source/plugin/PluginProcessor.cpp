@@ -28,20 +28,16 @@ void LupexProcessor::releaseResources()
                                         juce::MidiBuffer&)
 {
     juce::ScopedNoDenormals noDenormals;
-
-    if (parameters.getBypass())
-    {
-        // bypass activo - señal limpia
-        return;
-    }
+    
     engine.setPingPong (parameters.getToggle());
     engine.process (buffer.getWritePointer (0),
-                    buffer.getWritePointer (1),
-                    buffer.getNumSamples(),
-                    parameters.getTime(),
-                    parameters.getFeedback(),
-                    parameters.getMix(),
-                    parameters.getTone());
+                buffer.getWritePointer (1),
+                buffer.getNumSamples(),
+                parameters.getTime(),
+                parameters.getFeedback(),
+                parameters.getMix(),
+                parameters.getTone(),
+                parameters.getBypass());
 }
 
 juce::AudioProcessorEditor* LupexProcessor::createEditor()
