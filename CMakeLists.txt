@@ -17,7 +17,7 @@ endif()
 
 add_subdirectory(JUCE)
 
-juce_add_plugin(Lupex
+juce_add_plugin(LupexDelay
     COMPANY_NAME "Fauz Audio"
     BUNDLE_ID "com.fauzaudio.lupex"
     PLUGIN_MANUFACTURER_CODE Faud
@@ -34,7 +34,7 @@ juce_add_plugin(Lupex
         VST3_AUTO_MANIFEST FALSE
 )
 
-target_sources(Lupex
+target_sources(LupexDelay
     PRIVATE
         source/dsp/DelayLine.cpp
         source/dsp/BBDFilter.cpp
@@ -75,19 +75,19 @@ juce_add_binary_data(LupexAssets
         assets/images/screenshot.png
 )
 
-target_include_directories(Lupex
+target_include_directories(LupexDelay
     PRIVATE
         "${CMAKE_CURRENT_SOURCE_DIR}/source"
 )
 
-target_compile_definitions(Lupex
+target_compile_definitions(LupexDelay
     PUBLIC
         JUCE_WEB_BROWSER=0
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
 )
 
-target_link_libraries(Lupex
+target_link_libraries(LupexDelay
     PRIVATE
         LupexAssets
         juce::juce_audio_utils

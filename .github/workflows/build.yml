@@ -42,7 +42,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Lupex-Linux-VST3
-          path: build/Lupex_artefacts/Release/VST3/Lupex.vst3
+          path: "build/LupexDelay_artefacts/Release/VST3/Lupex Delay.vst3"
 
   build-windows:
     name: Windows
@@ -63,4 +63,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Lupex-Windows-VST3
-          path: build/Lupex_artefacts/Release/VST3/Lupex.vst3
+          path: "build/LupexDelay_artefacts/Release/VST3/Lupex Delay.vst3"
