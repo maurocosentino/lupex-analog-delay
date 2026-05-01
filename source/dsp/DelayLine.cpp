@@ -41,7 +41,7 @@ namespace Lupex
         while (targetReadPos < 0.0f)
             targetReadPos += (float)bufferSize;
 
-        // 🔥 smoothing del read pointer (clave para analog feel)
+        // smoothing del read pointer (clave para analog feel)
         float diff = targetReadPos - readPos;
 
         // wrap diff
@@ -63,7 +63,7 @@ namespace Lupex
         if (readPos < 0.0f) readPos += bufferSize;
         if (readPos >= bufferSize) readPos -= bufferSize;
 
-        // 🔊 interpolación lineal
+        // interpolación lineal
         int index0 = (int)readPos;
         int index1 = (index0 + 1) % bufferSize;
 
